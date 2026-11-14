@@ -106,20 +106,15 @@ public class CursoDao {
     }
 
 
-    public static void Delete(int codigo) {
+
+    public static boolean Delete(int codigo) {
         String sql = "delete from curso where codigo = ?";
 
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
 
             stmt.setInt(1, codigo);
 
-            int linhasAfetadas = stmt.executeUpdate();
-
-            if (linhasAfetadas > 0) {
-                System.out.println("Curso excluído com sucesso!");
-            } else {
-                System.out.println("Curso não encontrado!");
-            }
+            return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             if (e.getErrorCode() == 1451) {
@@ -127,7 +122,10 @@ public class CursoDao {
             } else {
                 System.out.println("Erro ao excluir curso: " + e.getMessage());
             }
+
+            return false;
         }
     }
+
 
 }

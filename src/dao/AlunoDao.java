@@ -5,6 +5,7 @@ import java.sql.Statement;
 import model.Aluno;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import model.Curso;
@@ -85,6 +86,37 @@ public class AlunoDao {
         return alunoList;
     }
 
+    public static Optional<Aluno> Read(int matricula) {
+        String sql = "select * from alunos where matricula = ?";
+
+        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
+
+            stmt.setInt(1, matricula);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Aluno aluno = new Aluno();
+
+                    aluno.setMatricula(rs.getInt("matricula"));
+                    aluno.setNome(rs.getString("nome"));
+                    aluno.setIdade(rs.getInt("idade"));
+
+                    Curso curso = new Curso();
+                    curso.setCodigo(rs.getInt("codigo_curso"));
+
+                    aluno.setCurso(curso);
+
+                    return Optional.of(aluno);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao consultar aluno: " + e.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
     public static void Update(Aluno aluno) {
         String sql = "update alunos set nome = ?, idade = ?, codigo_curso = ? where matricula = ?";
 
@@ -108,8 +140,7 @@ public class AlunoDao {
         }
     }
 
-
-    public static void Delete(int matricula) {
+    public static boolean Delete(int matricula) {
         String sql = "delete from alunos where matricula = ?";
 
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
@@ -118,15 +149,11 @@ public class AlunoDao {
 
             int linhasAfetadas = stmt.executeUpdate();
 
-            if (linhasAfetadas > 0) {
-                System.out.println("Aluno excluído com sucesso!");
-            } else {
-                System.out.println("Aluno não encontrado!");
-            }
+            return linhasAfetadas > 0;
 
         } catch (SQLException e) {
             System.out.println("Erro ao excluir aluno: " + e.getMessage());
+            return false;
         }
     }
-
 }

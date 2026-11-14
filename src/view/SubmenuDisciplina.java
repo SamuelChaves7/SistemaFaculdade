@@ -12,7 +12,7 @@ import java.util.List;
 public class SubmenuDisciplina {
 
     public static void Show() {
-
+        System.out.println("\n");
         Scanner scan = new Scanner(System.in);
         int opcao;
 
@@ -93,7 +93,11 @@ public class SubmenuDisciplina {
                         System.out.print("Digite o código da disciplina: ");
                         int codigo = scan.nextInt();
 
-                        DisciplinaController.Delete(codigo);
+                        if (DisciplinaController.Delete(codigo)) {
+                            System.out.println("Disciplina excluída com sucesso!");
+                        } else {
+                            System.out.println("Disciplina não encontrada!");
+                        }
                     }
                     break;
                 }
@@ -143,5 +147,6 @@ public class SubmenuDisciplina {
             }
 
         } while (opcao < 5);
+        System.out.println("\n");
     }
 }

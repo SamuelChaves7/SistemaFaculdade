@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class SubmenuCurso {
 
     public static void Show() {
-
+        System.out.println("\n");
         Scanner scan = new Scanner(System.in);
         int opcao;
 
@@ -59,7 +59,11 @@ public class SubmenuCurso {
                     System.out.print("Digite o código do curso que deseja deletar: ");
                     int codigo = scan.nextInt();
 
-                    CursoController.Delete(codigo);
+                    if (CursoController.Delete(codigo)) {
+                        System.out.println("Curso excluído com sucesso!");
+                    } else {
+                        System.out.println("Curso não encontrado ou possui alunos/disciplinas vinculados!");
+                    }
                     break;
                 }
                 case 4: {
@@ -90,5 +94,6 @@ public class SubmenuCurso {
             }
 
         } while (opcao < 5);
+        System.out.println("\n");
     }
 }

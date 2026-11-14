@@ -33,5 +33,6 @@ public class Menu {
             }
 
         } while (opcao < 4);
+        System.out.println("\n");
     }
 }

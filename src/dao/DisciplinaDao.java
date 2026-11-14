@@ -1,4 +1,3 @@
-
 package dao;
 
 import database.DatabaseConnection;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import model.Curso;
-
 
 public class DisciplinaDao {
 
@@ -114,23 +112,17 @@ public class DisciplinaDao {
         }
     }
 
-    public static void Delete(int codigo) {
+    public static boolean Delete(int codigo) {
         String sql = "delete from disciplinas where codigo = ?";
 
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
-
             stmt.setInt(1, codigo);
 
-            int linhasAfetadas = stmt.executeUpdate();
-
-            if (linhasAfetadas > 0) {
-                System.out.println("Disciplina excluída com sucesso!");
-            } else {
-                System.out.println("Disciplina não encontrada!");
-            }
+            return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             System.out.println("Erro ao excluir disciplina: " + e.getMessage());
+            return false;
         }
     }
 

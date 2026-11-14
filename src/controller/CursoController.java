@@ -14,7 +14,7 @@ public class CursoController {
     public static void Update(Curso curso) {
         CursoDao.Update(curso);
     }
-    public static void Delete(int codigo) {
-        CursoDao.Delete(codigo);
+    public static boolean Delete(int codigo) {
+        return CursoDao.Delete(codigo);
     }
 }
