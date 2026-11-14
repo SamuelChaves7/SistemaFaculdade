@@ -179,7 +179,7 @@ public class SubmenuAluno {
 
             }
 
-        } while (opcao < 5);
+        } while (opcao != 5);
         System.out.println("\n");
     }
 }

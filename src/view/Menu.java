@@ -32,7 +32,7 @@ public class Menu {
                     break;
             }
 
-        } while (opcao < 4);
+        } while (opcao != 4);
         System.out.println("\n");
     }
 }
