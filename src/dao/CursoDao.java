@@ -14,16 +14,21 @@ public class CursoDao {
 
     public static void CreateTable() {
         String sqlCreateTable = """
-            create table if not exists curso (
-                codigo int primary key,
-                nome varchar(100) not null,
-                turno varchar(30) not null
-            );
-        """;
+        create table if not exists curso (
+            codigo int auto_increment primary key,
+            nome varchar(100) not null,
+            turno varchar(30) not null
+        );
+    """;
 
         try (Statement stmt = DatabaseConnection.getConnection().createStatement()) {
             stmt.executeUpdate(sqlCreateTable);
-            System.out.println("Tabela 'cursos' criada com sucesso!");
+
+            stmt.executeUpdate(
+                    "alter table curso modify codigo int not null auto_increment"
+            );
+
+            System.out.println("Tabela 'curso' criada com sucesso!");
 
         } catch (SQLException e) {
             System.out.println("Erro ao criar a tabela: " + e.getMessage());
@@ -32,14 +37,15 @@ public class CursoDao {
     }
     public static List<Curso> cursoList = new ArrayList<>();
 
+
+
     public static void Create(Curso curso) {
-        String sql = "insert into cursos (codigo, nome, turno) values (?, ?, ?)";
+        String sql = "insert into curso (nome, turno) values (?, ?)";
 
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
 
-            stmt.setInt(1, curso.getCodigo());
-            stmt.setString(2, curso.getNome());
-            stmt.setString(3, curso.getTurno());
+            stmt.setString(1, curso.getNome());
+            stmt.setString(2, curso.getTurno());
 
             stmt.executeUpdate();
 
@@ -47,9 +53,10 @@ public class CursoDao {
 
         } catch (SQLException e) {
             System.out.println("Erro ao cadastrar curso: " + e.getMessage());
-            throw new RuntimeException("Erro ao cadastrar curso no banco de dados", e);
         }
     }
+
+
     public static List<Curso> Read() {
         cursoList.clear();
 
@@ -75,6 +82,7 @@ public class CursoDao {
 
         return cursoList;
     }
+
     public static void Update(Curso curso) {
         String sql = "update curso set nome = ?, turno = ? where codigo = ?";
 
@@ -84,15 +92,20 @@ public class CursoDao {
             stmt.setString(2, curso.getTurno());
             stmt.setInt(3, curso.getCodigo());
 
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
 
-            System.out.println("Curso atualizado com sucesso!");
+            if (linhasAfetadas > 0) {
+                System.out.println("Curso atualizado com sucesso!");
+            } else {
+                System.out.println("Curso não encontrado!");
+            }
 
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar curso: " + e.getMessage());
-            throw new RuntimeException("Erro ao atualizar curso no banco de dados", e);
         }
     }
+
+
     public static void Delete(int codigo) {
         String sql = "delete from curso where codigo = ?";
 
@@ -100,13 +113,21 @@ public class CursoDao {
 
             stmt.setInt(1, codigo);
 
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
 
-            System.out.println("Curso excluído com sucesso!");
+            if (linhasAfetadas > 0) {
+                System.out.println("Curso excluído com sucesso!");
+            } else {
+                System.out.println("Curso não encontrado!");
+            }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao excluir curso: " + e.getMessage());
-            throw new RuntimeException("Erro ao excluir curso no banco de dados", e);
+            if (e.getErrorCode() == 1451) {
+                System.out.println("Não foi possível excluir o curso, pois existem alunos ou disciplinas vinculadas a ele!");
+            } else {
+                System.out.println("Erro ao excluir curso: " + e.getMessage());
+            }
         }
     }
+
 }

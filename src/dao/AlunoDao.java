@@ -14,7 +14,7 @@ public class AlunoDao {
     public static void CreateTable() {
         String sqlCreateTable = """
         create table if not exists alunos (
-            matricula int primary key,
+            matricula int auto_increment primary key,
             nome varchar(100) not null,
             idade int not null,
             codigo_curso int not null,
@@ -24,6 +24,9 @@ public class AlunoDao {
 
         try (Statement stmt = DatabaseConnection.getConnection().createStatement()) {
             stmt.executeUpdate(sqlCreateTable);
+            stmt.executeUpdate(
+                    "alter table alunos modify matricula int not null auto_increment"
+            );
             System.out.println("Tabela 'alunos' criada com sucesso!");
 
         } catch (SQLException e) {
@@ -32,15 +35,15 @@ public class AlunoDao {
         }
     }
     public static List<Aluno> alunoList = new ArrayList<>();
+
     public static void Create(Aluno aluno) {
-        String sql = "insert into alunos (matricula, nome, idade, codigo_curso) values (?, ?, ?, ?)";
+        String sql = "insert into alunos (nome, idade, codigo_curso) values (?, ?, ?)";
 
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
 
-            stmt.setInt(1, aluno.getMatricula());
-            stmt.setString(2, aluno.getNome());
-            stmt.setInt(3, aluno.getIdade());
-            stmt.setInt(4, aluno.getCurso().getCodigo());
+            stmt.setString(1, aluno.getNome());
+            stmt.setInt(2, aluno.getIdade());
+            stmt.setInt(3, aluno.getCurso().getCodigo());
 
             stmt.executeUpdate();
 
@@ -48,9 +51,9 @@ public class AlunoDao {
 
         } catch (SQLException e) {
             System.out.println("Erro ao cadastrar aluno: " + e.getMessage());
-            throw new RuntimeException("Erro ao cadastrar aluno no banco de dados", e);
         }
     }
+
     public static List<Aluno> Read() {
         alunoList.clear();
 
@@ -81,6 +84,7 @@ public class AlunoDao {
 
         return alunoList;
     }
+
     public static void Update(Aluno aluno) {
         String sql = "update alunos set nome = ?, idade = ?, codigo_curso = ? where matricula = ?";
 
@@ -91,15 +95,20 @@ public class AlunoDao {
             stmt.setInt(3, aluno.getCurso().getCodigo());
             stmt.setInt(4, aluno.getMatricula());
 
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
 
-            System.out.println("Aluno atualizado com sucesso!");
+            if (linhasAfetadas > 0) {
+                System.out.println("Aluno atualizado com sucesso!");
+            } else {
+                System.out.println("Aluno não encontrado!");
+            }
 
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar aluno: " + e.getMessage());
-            throw new RuntimeException("Erro ao atualizar aluno no banco de dados", e);
         }
     }
+
+
     public static void Delete(int matricula) {
         String sql = "delete from alunos where matricula = ?";
 
@@ -107,13 +116,17 @@ public class AlunoDao {
 
             stmt.setInt(1, matricula);
 
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
 
-            System.out.println("Aluno excluído com sucesso!");
+            if (linhasAfetadas > 0) {
+                System.out.println("Aluno excluído com sucesso!");
+            } else {
+                System.out.println("Aluno não encontrado!");
+            }
 
         } catch (SQLException e) {
             System.out.println("Erro ao excluir aluno: " + e.getMessage());
-            throw new RuntimeException("Erro ao excluir aluno no banco de dados", e);
         }
     }
+
 }

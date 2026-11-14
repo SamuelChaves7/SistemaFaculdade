@@ -2,19 +2,22 @@ import dao.AlunoDao;
 import dao.CursoDao;
 import dao.DisciplinaDao;
 import database.DatabaseConnection;
+import view.Menu;
 
 public class Main {
-
     public static void main(String[] args) {
 
-        DatabaseConnection.getConnection();
+        try {
+            DatabaseConnection.getConnection();
 
-        CursoDao.CreateTable();
-        DisciplinaDao.CreateTable();
-        AlunoDao.CreateTable();
+            CursoDao.CreateTable();
+            DisciplinaDao.CreateTable();
+            AlunoDao.CreateTable();
 
-        DatabaseConnection.closeConnection();
+            Menu.Show();
 
+        } finally {
+            DatabaseConnection.closeConnection();
+        }
     }
 }
-

@@ -17,7 +17,7 @@ public class DisciplinaDao {
     public static void CreateTable() {
         String sqlCreateTable = """
             create table if not exists disciplinas (
-                codigo int primary key,
+                codigo int auto_increment primary key,
                 nome varchar(100) not null,
                 carga_horaria int not null,
                 codigo_curso int not null,
@@ -27,6 +27,9 @@ public class DisciplinaDao {
 
         try (Statement stmt = DatabaseConnection.getConnection().createStatement()) {
             stmt.executeUpdate(sqlCreateTable);
+            stmt.executeUpdate(
+                    "alter table disciplinas modify codigo int not null auto_increment"
+            );
             System.out.println("Tabela 'disciplinas' criada com sucesso!");
 
         } catch (SQLException e) {
@@ -34,16 +37,18 @@ public class DisciplinaDao {
             e.printStackTrace();
         }
     }
+
     public static List<Disciplina> disciplinaList = new ArrayList<>();
+
+
     public static void Create(Disciplina disciplina) {
-        String sql = "insert into disciplinas (codigo, nome, carga_horaria, codigo_curso) values (?, ?, ?, ?)";
+        String sql = "insert into disciplinas (nome, carga_horaria, codigo_curso) values (?, ?, ?)";
 
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
 
-            stmt.setInt(1, disciplina.getCodigo());
-            stmt.setString(2, disciplina.getNome());
-            stmt.setInt(3, disciplina.getCargaHoraria());
-            stmt.setInt(4, disciplina.getCurso().getCodigo());
+            stmt.setString(1, disciplina.getNome());
+            stmt.setInt(2, disciplina.getCargaHoraria());
+            stmt.setInt(3, disciplina.getCurso().getCodigo());
 
             stmt.executeUpdate();
 
@@ -51,9 +56,10 @@ public class DisciplinaDao {
 
         } catch (SQLException e) {
             System.out.println("Erro ao cadastrar disciplina: " + e.getMessage());
-            throw new RuntimeException("Erro ao cadastrar disciplina no banco de dados", e);
         }
     }
+
+
     public static List<Disciplina> Read() {
         disciplinaList.clear();
 
@@ -84,6 +90,7 @@ public class DisciplinaDao {
 
         return disciplinaList;
     }
+
     public static void Update(Disciplina disciplina) {
         String sql = "update disciplinas set nome = ?, carga_horaria = ?, codigo_curso = ? where codigo = ?";
 
@@ -94,15 +101,19 @@ public class DisciplinaDao {
             stmt.setInt(3, disciplina.getCurso().getCodigo());
             stmt.setInt(4, disciplina.getCodigo());
 
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
 
-            System.out.println("Disciplina atualizada com sucesso!");
+            if (linhasAfetadas > 0) {
+                System.out.println("Disciplina atualizada com sucesso!");
+            } else {
+                System.out.println("Disciplina não encontrada!");
+            }
 
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar disciplina: " + e.getMessage());
-            throw new RuntimeException("Erro ao atualizar disciplina no banco de dados", e);
         }
     }
+
     public static void Delete(int codigo) {
         String sql = "delete from disciplinas where codigo = ?";
 
@@ -110,13 +121,17 @@ public class DisciplinaDao {
 
             stmt.setInt(1, codigo);
 
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
 
-            System.out.println("Disciplina excluída com sucesso!");
+            if (linhasAfetadas > 0) {
+                System.out.println("Disciplina excluída com sucesso!");
+            } else {
+                System.out.println("Disciplina não encontrada!");
+            }
 
         } catch (SQLException e) {
             System.out.println("Erro ao excluir disciplina: " + e.getMessage());
-            throw new RuntimeException("Erro ao excluir disciplina no banco de dados", e);
         }
     }
+
 }
