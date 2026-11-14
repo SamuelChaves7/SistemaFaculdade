@@ -1,0 +1,22 @@
+# Credenciais e configurações locais
+database.properties
+.env
+
+# Arquivos temporários do IntelliJ
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+.idea/httpRequests/
+
+# Arquivos compilados
+out/
+target/
+*.class
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Configurações do IntelliJ
+.idea/
+*.iml
