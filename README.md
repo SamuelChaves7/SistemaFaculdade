@@ -144,4 +144,4 @@ A organização facilita a manutenção, compreensão e evolução do código.
 
 ## Autor
 
-Projeto acadêmico desenvolvido como atividade prática de Programação Orientada a Objetos, com integração a banco de dados MySQL.
+Samuel Chaves. Projeto acadêmico desenvolvido como atividade prática de Programação Orientada a Objetos, com integração a banco de dados MySQL.
